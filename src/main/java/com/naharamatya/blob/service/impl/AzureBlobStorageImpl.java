@@ -15,6 +15,7 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobItem;
+import com.azure.storage.blob.models.BlobStorageException;
 import com.naharamatya.blob.model.Storage;
 import com.naharamatya.blob.service.IAzureBlobStorage;
 
@@ -35,63 +36,121 @@ public class AzureBlobStorageImpl implements IAzureBlobStorage {
 
 	@Override
 	public String write(Storage storage) {
-		String path = getPath(storage);
-		BlobClient client = blobContainerClient.getBlobClient(path);
-		
-		client.upload(storage.getInputStream(), false);
-		return path;
+		try {
+			String path = getPath(storage);
+			BlobClient client = blobContainerClient.getBlobClient(path);
+
+			client.upload(storage.getInputStream(), false);
+			return path;
+		} catch (BlobStorageException e) {
+			return e.getMessage();
+		} catch (RuntimeException e) {
+			return e.getMessage();
+		} catch (Exception e) {
+			return e.getMessage();
+		}
 	}
 
 	@Override
 	public String update(Storage storage) {
-		String path = getPath(storage);
-		BlobClient client = blobContainerClient.getBlobClient(path);
-		
-		client.upload(storage.getInputStream(), true);
-		return path;
+		try {
+			String path = getPath(storage);
+			BlobClient client = blobContainerClient.getBlobClient(path);
+
+			client.upload(storage.getInputStream(), true);
+			return path;
+		} catch (BlobStorageException e) {
+			return e.getMessage();
+		} catch (RuntimeException e) {
+			return e.getMessage();
+		} catch (Exception e) {
+			return e.getMessage();
+		}
 	}
 
 	@Override
 	public byte[] read(Storage storage) {
-		String path = getPath(storage);
-		BlobClient client = blobContainerClient.getBlobClient(path);
-		
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		client.download(outputStream);
-		final byte[] bytes = outputStream.toByteArray();
-		return bytes;
+		try {
+			String path = getPath(storage);
+			BlobClient client = blobContainerClient.getBlobClient(path);
+
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			client.download(outputStream);
+			final byte[] bytes = outputStream.toByteArray();
+			return bytes;
+		} catch (BlobStorageException e) {
+			System.out.println(e.getMessage());
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return null;
 	}
 
 	@Override
 	public List<String> getAllBlobs(String path) {
-		PagedIterable<BlobItem> blobList = blobContainerClient.listBlobsByHierarchy(path);
-		List<String> blobNamesList = new ArrayList<>();
-		for (BlobItem blob : blobList) {
+		try {
+			PagedIterable<BlobItem> blobList = blobContainerClient.listBlobsByHierarchy(path);
+			List<String> blobNamesList = new ArrayList<>();
+			for (BlobItem blob : blobList) {
 
-			blobNamesList.add(blob.getName());
+				blobNamesList.add(blob.getName());
+			}
+
+			return blobNamesList;
+		} catch (BlobStorageException e) {
+			System.out.println(e.getMessage());
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
-
-		return blobNamesList;
+		return null;
 	}
 
 	@Override
 	public void delete(Storage storage) {
-		String path = getPath(storage);
-		BlobClient client = blobContainerClient.getBlobClient(path);
-		client.delete();
-		log.info("Blob is deleted successfully");
+		try {
+			String path = getPath(storage);
+			BlobClient client = blobContainerClient.getBlobClient(path);
+			client.delete();
+			log.info("Blob is deleted successfully");
+		} catch (BlobStorageException e) {
+			System.out.println(e.getMessage());
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	@Override
 	public void createContainer() {
-		blobServiceClient.createBlobContainer(containerName);
-		log.info("Container " + containerName + " created.");
+		try {
+			blobServiceClient.createBlobContainer(containerName);
+			log.info("Container " + containerName + " created.");
+		} catch (BlobStorageException e) {
+			System.out.println(e.getMessage());
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	@Override
 	public void deleteContainer() {
-		blobServiceClient.deleteBlobContainer(containerName);
-		log.info("Container " + containerName + " deleted.");
+		try {
+			blobServiceClient.deleteBlobContainer(containerName);
+			log.info("Container " + containerName + " deleted.");
+		} catch (BlobStorageException e) {
+			System.out.println(e.getMessage());
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	private String getPath(Storage storage) {
@@ -101,12 +160,12 @@ public class AzureBlobStorageImpl implements IAzureBlobStorage {
 		}
 		return null;
 	}
-	
+
 	public Storage getStorage(String path, String fileName, String data) {
 		Storage storage = new Storage();
 		storage.setPath(path);
 		storage.setFileName(fileName);
-		if(StringUtils.isNotBlank(data)) {
+		if (StringUtils.isNotBlank(data)) {
 			storage.setInputStream(new ByteArrayInputStream(data.getBytes()));
 		}
 		return storage;
