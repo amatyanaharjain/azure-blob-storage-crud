@@ -10,14 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Storage {
-	
+
 	private String path;
-	
+
 	private String fileName;
-	
+
 	private InputStream inputStream;
-	
-	
-	
-	
+
 }

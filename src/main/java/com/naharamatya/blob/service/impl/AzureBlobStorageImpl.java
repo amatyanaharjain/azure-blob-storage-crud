@@ -1,5 +1,6 @@
 package com.naharamatya.blob.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +63,8 @@ public class AzureBlobStorageImpl implements IAzureBlobStorage {
 	}
 
 	@Override
-	public List<String> getAllBlobs(Storage storage) {
-		PagedIterable<BlobItem> blobList = blobContainerClient.listBlobsByHierarchy(storage.getPath() + "/");
+	public List<String> getAllBlobs(String path) {
+		PagedIterable<BlobItem> blobList = blobContainerClient.listBlobsByHierarchy(path);
 		List<String> blobNamesList = new ArrayList<>();
 		for (BlobItem blob : blobList) {
 
@@ -99,6 +100,16 @@ public class AzureBlobStorageImpl implements IAzureBlobStorage {
 			return storage.getPath() + "/" + storage.getFileName();
 		}
 		return null;
+	}
+	
+	public Storage getStorage(String path, String fileName, String data) {
+		Storage storage = new Storage();
+		storage.setPath(path);
+		storage.setFileName(fileName);
+		if(StringUtils.isNotBlank(data)) {
+			storage.setInputStream(new ByteArrayInputStream(data.getBytes()));
+		}
+		return storage;
 	}
 
 }
