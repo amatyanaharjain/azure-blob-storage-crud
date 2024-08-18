@@ -33,21 +33,21 @@ public class AzureBlobStorageController {
 
 	@PostMapping("/write-blob")
 	public void writeBlob() {
-		Storage storage = storageImpl.getStorage("cust","cust1.txt","Hello World");
+		Storage storage = storageImpl.getStorage("folder1","file1.txt","Some random text");
 		String writeStr = storageImpl.write(storage);
 		log.info(writeStr);
 	}
 	
 	@PutMapping("/update-blob")
 	public void updateBlob() {
-		Storage storage = storageImpl.getStorage("cust","cust1.txt","Updated Text");
+		Storage storage = storageImpl.getStorage("folder1","file1.txt","Updated Text");
 		String writeStr = storageImpl.update(storage);
 		log.info(writeStr);
 	}
 	
 	@DeleteMapping("/delete-blob")
 	public void deleteBlob() {
-		Storage storage = storageImpl.getStorage("cust","cust1.txt","");
+		Storage storage = storageImpl.getStorage("folder1","file1.txt","");
 		storageImpl.delete(storage);
 	}
 	
@@ -60,7 +60,7 @@ public class AzureBlobStorageController {
 	
 	@GetMapping("/read-blob")
 	public void readBlob() {
-		Storage storage = storageImpl.getStorage("cust","cust1.txt","");
+		Storage storage = storageImpl.getStorage("folder1","file1.txt","");
 		byte[] readContent = storageImpl.read(storage);
 		System.out.println(readContent);
 	}
